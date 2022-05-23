@@ -1,7 +1,7 @@
 package com.codexie.filter;
 
-import com.alibaba.fastjson.JSON;
 
+import cn.hutool.json.JSONUtil;
 import com.codexie.common.BaseContext;
 import com.codexie.common.R;
 import com.codexie.pojo.Employee;
@@ -42,7 +42,8 @@ public class LoginCheckFilter implements Filter{
                 "/front/**",
                 "/common/**",
                 "/user/sendMsg",
-                "/user/login"
+                "/user/login",
+                "/user/code",
         };
 
         //2、判断本次请求是否需要处理
@@ -60,6 +61,7 @@ public class LoginCheckFilter implements Filter{
             log.info("用户已登录，用户id为：{}",request.getSession().getAttribute("employee"));
 
             Employee employee= (Employee) request.getSession().getAttribute("employee");
+            BaseContext.setCurrentId(employee.getId());
             BaseContext.setEmp(employee);
 
             filterChain.doFilter(request,response);
@@ -71,6 +73,7 @@ public class LoginCheckFilter implements Filter{
             log.info("用户已登录，用户id为：{}",request.getSession().getAttribute("user"));
 
             User user = (User) request.getSession().getAttribute("user");
+            BaseContext.setCurrentId(user.getId());
             BaseContext.setUser(user);
 
             filterChain.doFilter(request,response);
@@ -79,7 +82,7 @@ public class LoginCheckFilter implements Filter{
 
         log.info("用户未登录");
         //5、如果未登录则返回未登录结果，通过输出流方式向客户端页面响应数据
-        response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
+        response.getWriter().write(JSONUtil.toJsonStr(R.error("NOTLOGIN")));
         return;
 
     }

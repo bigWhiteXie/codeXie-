@@ -2,7 +2,7 @@ function loginApi(data) {
     return $axios({
       'url': '/user/login',
       'method': 'post',
-      data
+      data:data
     })
   }
 
